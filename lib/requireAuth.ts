@@ -10,5 +10,7 @@ export function requireAuth(req: NextRequest) {
 
     const token = authHeader.split(' ')[1];
 
-    return verifyToken(token);
+    const payload = verifyToken(token);
+
+    return payload; // { userId }
 }
