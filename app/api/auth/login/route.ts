@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/mongodb";
 import jwt from "jsonwebtoken";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
+import { signToken } from "@/lib/auth";
 
 export async function POST(req: Request) {
     try {
@@ -35,11 +36,7 @@ export async function POST(req: Request) {
             );
         }
 
-        const token = jwt.sign(
-            { userId: user._id },
-            process.env.JWT_SECRET!,
-            { expiresIn: '7d' }
-        );
+        const token = signToken({ userId: user._id.toString() });
 
         return NextResponse.json({
             token,
