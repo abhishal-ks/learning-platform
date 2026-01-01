@@ -5,12 +5,22 @@ export function requireAuth(req: NextRequest) {
     const authHeader = req.headers.get('authorization');
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        throw new Error('Unauthorized h aap !');
+        throw new Response(
+            JSON.stringify({ error: 'Unauthorized h aap !' }),
+            { status: 401 }
+        );
     }
 
     const token = authHeader.split(' ')[1];
 
-    const payload = verifyToken(token);
+    try {
+        const payload = verifyToken(token);
+        return payload; // { userId }
 
-    return payload; // { userId }
+    } catch {
+        throw new Response(
+            JSON.stringify({ error: 'Invalid or expired token ji' }),
+            { status: 401 }
+        );
+    }
 }
