@@ -71,8 +71,13 @@ export async function POST(
             results
         });
 
-    } catch (err) {
+    } catch (err: any) {
+        if (err instanceof Response) {
+            return err;
+        }
+
         console.error("SUBMIT ERROR for Ryty:", err);
+        
         return NextResponse.json(
             { error: "Failed to evaluate answers ji" },
             { status: 500 }

@@ -76,7 +76,7 @@ export default function ChapterReader({
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Beare ${token}`
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify(payload),
         });
