@@ -38,6 +38,21 @@ export async function POST(
             );
         }
 
+        // 🚫 DUPLICATE ATTEMPT CHECK
+        const existingAttempt = await Attempt.findOne(
+            {
+                user: user.userId,
+                chapter: chapterId
+            }
+        );
+
+        if (existingAttempt) {
+            return NextResponse.json(
+                { error: 'You have already attempted this chapter ji !' },
+                { status: 409 }
+            );
+        }
+
         // Fetch all MCQs for this chapter
         const mcqs = await Mcq.find({ chapter: chapterId });
 
