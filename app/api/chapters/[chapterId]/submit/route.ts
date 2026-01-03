@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 
 import { connectDB } from "@/lib/mongodb";
 import { requireAuth } from "@/lib/requireAuth";
+import Attempt from "@/models/Attempt";
 import Chapter from "@/models/Chapter";
 import Mcq from "@/models/Mcq";
 import { NextRequest, NextResponse } from "next/server";
@@ -15,7 +16,7 @@ export async function POST(
         const { chapterId } = await context.params;
 
         // Auth check
-        requireAuth(req);
+        const user = requireAuth(req);
 
         const { answers } = await req.json();
 
@@ -65,7 +66,19 @@ export async function POST(
             );
         }
 
+        // ✅ CREATE ATTEMPT
+        const attempt = await Attempt.create(
+            {
+                user: user.userId,
+                chapter: chapterId,
+                score,
+                total: mcqs.length,
+                results
+            }
+        );
+
         return NextResponse.json({
+            attemptId: attempt._id,
             score,
             total: mcqs.length,
             results
@@ -77,7 +90,7 @@ export async function POST(
         }
 
         console.error("SUBMIT ERROR for Ryty:", err);
-        
+
         return NextResponse.json(
             { error: "Failed to evaluate answers ji" },
             { status: 500 }
